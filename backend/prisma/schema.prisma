@@ -14,9 +14,20 @@ datasource db {
 
 model webhook{
   id Int  @id @default(autoincrement())
-  webhook_id String
+  webhook_id String // to be made unique
   method  String?
   headers Json
   body Json
   received_at DateTime @default(now())
+}
+
+model replay{
+  id Int @id @default(autoincrement())
+  webhook_id String //to be made unique
+  target_url String
+  status_code Int
+  response_body String
+  duration String
+  success Boolean
+  created_at DateTime @default(now()) 
 }

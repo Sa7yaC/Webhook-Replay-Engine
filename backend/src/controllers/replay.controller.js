@@ -14,15 +14,16 @@ const prisma = new PrismaClient({ adapter });
 export const webhookReplay = async(req,res)=>{
     try {
         const targetUrl = req.body.targetUrl;
-        const webhookID = Number(req.params.id);
+        const webhookID = req.params.id;
 
-        const dataFetched = await prisma.webhook.findUnique({
+        const dataFetched = await prisma.webhook.findFirst({
             where: {
-                id: webhookID,
+                webhook_id: webhookID,
             },
             select: {
                 headers: true,
-                body: true
+                body: true,
+                webhook_id: true
             }
         });
 
@@ -36,22 +37,28 @@ export const webhookReplay = async(req,res)=>{
         const webhookHeaders = dataFetched.headers;
         const webhookBody = dataFetched.body;
 
-        console.log(targetUrl);
-        console.log(webhookHeaders);
-        console.log(webhookBody);
-
         const startTime = performance.now();
 
         const response = await axios.post(
             targetUrl,
             {
-                headers: webhookHeaders,
+                // headers: webhookHeaders,
                 body: webhookBody
             }
         );
 
         const endTime = performance.now();
         const duration = (endTime - startTime).toFixed(2);
+        const replayStorage = await prisma.replay.create({
+            data:{
+                webhook_id: webhookID,
+                target_url: targetUrl,
+                status_code: response.status,
+                response_body: String(response.data),
+                duration: `${duration}ms`,
+                success: response.status >= 200 && response.status < 300
+            }
+        });
 
         return res.status(200).json({
             success: true,
@@ -59,6 +66,7 @@ export const webhookReplay = async(req,res)=>{
             duration: `${duration}ms`,
             targetUrl: targetUrl
         });
+
 
     } catch (error) {
         return res.status(500).json({
@@ -68,3 +76,21 @@ export const webhookReplay = async(req,res)=>{
         });
     }
 };
+
+export const fetchWebhookReplay = async(req,res)=>{
+    const webhookID = req.params.id;
+    
+    const fetchedReplay = await prisma.replay.findMany({
+        where:{
+            webhook_id: webhookID,
+        },
+        select:{
+            id: true,
+            target_url: true,
+            status_code: true,
+            duration: true,
+            success: true
+        }
+    });
+    return res.status(200).json(fetchedReplay);
+}
