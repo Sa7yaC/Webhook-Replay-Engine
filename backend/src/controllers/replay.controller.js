@@ -1,20 +1,33 @@
 import pg from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../generated/prisma/client";
-import { json } from "express";
 import axios from "axios";
+import { validateTargetUrl } from "../utils/urlSecurity.js";
 
 const pool = new pg.Pool({
-  connectionString: process.env.DATABASE_URL,
+    connectionString: process.env.DATABASE_URL,
 });
 
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
-export const webhookReplay = async(req,res)=>{
+const MAX_WEBHOOK_BODY_SIZE = 20 * 1024;
+
+export const webhookReplay = async (req, res) => {
     try {
         const targetUrl = req.body.targetUrl;
         const webhookID = req.params.id;
+
+        let validatedUrl;
+
+        try {
+            validatedUrl = await validateTargetUrl(targetUrl);
+        } catch (error) {
+            return res.status(400).json({
+                success: false,
+                message: error.message
+            });
+        }
 
         const dataFetched = await prisma.webhook.findFirst({
             where: {
@@ -37,26 +50,65 @@ export const webhookReplay = async(req,res)=>{
         const webhookHeaders = dataFetched.headers;
         const webhookBody = dataFetched.body;
 
+        const bodySize = Buffer.byteLength(
+            JSON.stringify(webhookBody),
+            "utf8"
+        );
+
+        if (bodySize > MAX_WEBHOOK_BODY_SIZE) {
+            return res.status(413).json({
+                success: false,
+                message: "Webhook body exceeds the 20 KB limit"
+            });
+        }
+
+        const safeHeaders = {};
+
+        const allowedHeaders = [
+            "content-type",
+            "accept",
+            "user-agent"
+        ];
+
+        for (const header of allowedHeaders) {
+            if (
+                webhookHeaders &&
+                webhookHeaders[header]
+            ) {
+                safeHeaders[header] = webhookHeaders[header];
+            }
+        }
+
         const startTime = performance.now();
 
         const response = await axios.post(
-            targetUrl,
+            validatedUrl.toString(),
+            webhookBody,
             {
-                // headers: webhookHeaders,
-                body: webhookBody
+                headers: safeHeaders,
+
+                timeout: 10_000,
+
+                maxRedirects: 0,
+
+                validateStatus: () => true
             }
         );
 
         const endTime = performance.now();
+
         const duration = (endTime - startTime).toFixed(2);
-        const replayStorage = await prisma.replay.create({
-            data:{
+
+        await prisma.replay.create({
+            data: {
                 webhook_id: webhookID,
-                target_url: targetUrl,
+                target_url: validatedUrl.toString(),
                 status_code: response.status,
                 response_body: String(response.data),
                 duration: `${duration}ms`,
-                success: response.status >= 200 && response.status < 300
+                success:
+                    response.status >= 200 &&
+                    response.status < 300
             }
         });
 
@@ -64,15 +116,33 @@ export const webhookReplay = async(req,res)=>{
             success: true,
             status: response.status,
             duration: `${duration}ms`,
-            targetUrl: targetUrl
+            targetUrl: validatedUrl.toString()
         });
 
-
     } catch (error) {
+        console.error("Webhook replay error:", error);
+
+        if (error.code === "ECONNABORTED") {
+            return res.status(504).json({
+                success: false,
+                message: "Target server took too long to respond"
+            });
+        }
+
+        if (
+            error.response &&
+            error.response.status >= 300 &&
+            error.response.status < 400
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Target URL redirects to another location, which is not allowed"
+            });
+        }
+
         return res.status(500).json({
             success: false,
-            message: "Failed to replay webhook",
-            error: error.message
+            message: "Failed to replay webhook"
         });
     }
 };
