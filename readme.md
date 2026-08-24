@@ -214,6 +214,55 @@ Example response:
 ]
 ```
 
+## Docker
+
+The backend and PostgreSQL database can be run using Docker Compose.
+
+### Services
+
+```text
+Docker Compose
+      │
+      ├── Backend
+      │    └── Node.js + Express
+      │
+      └── PostgreSQL
+```
+
+### Run the Project
+
+From the project root:
+
+```bash
+docker compose up --build
+```
+
+The backend will be available at:
+
+```text
+http://localhost:3000
+```
+
+The PostgreSQL database runs as a separate Docker container and is connected to the backend through the Docker Compose network.
+
+### Stop the Containers
+
+```bash
+docker compose down
+```
+
+### Run in Development
+
+The backend uses Nodemon inside the development container, so changes to the backend source code are automatically detected and the server is restarted.
+
+The project mounts the local `backend` directory into the container during development, allowing changes to controllers, routes, utilities, and other source files to be reflected without rebuilding the Docker image.
+
+For changes to dependencies or Docker configuration, rebuild the containers:
+
+```bash
+docker compose up --build
+```
+
 ## Technology
 
 - Node.js
@@ -221,32 +270,46 @@ Example response:
 - PostgreSQL
 - Prisma ORM
 - Axios
+- Docker
+- Docker Compose
 
 ## Project Structure
 
 ```text
-backend/
-├── src/
-│   ├── controllers/
-│   │   ├── webhook.controller.js
-│   │   └── replay.controller.js
-│   │
-│   ├── routes/
-│   │   ├── webhook.routes.js
-│   │   └── replay.routes.js
-│   │
-│   └── utils/
-│       └── urlSecurity.js
+Webhook-Replay-Engine/
 │
-├── prisma/
-│   └── schema.prisma
+├── backend/
+│   ├── src/
+│   │   ├── controllers/
+│   │   │   ├── webhook.controller.js
+│   │   │   └── replay.controller.js
+│   │   │
+│   │   ├── routes/
+│   │   │   ├── webhook.routes.js
+│   │   │   └── replay.routes.js
+│   │   │
+│   │   └── utils/
+│   │       └── urlSecurity.js
+│   │
+│   ├── prisma/
+│   │   └── schema.prisma
+│   │
+│   ├── Dockerfile
+│   ├── .dockerignore
+│   ├── app.js
+│   └── server.js
 │
-├── app.js
-└── server.js
+├── frontend/
+│
+├── docker-compose.yml
+├── README.md
+└── LICENSE
 ```
 
 ## Current Status
 
 The core backend functionality for webhook capture, storage, inspection, replay, replay tracking, and basic replay security has been implemented.
+
+Docker and Docker Compose have also been integrated to containerize the backend and PostgreSQL database.
 
 The project is currently being extended with a React dashboard and additional production-level security features.
