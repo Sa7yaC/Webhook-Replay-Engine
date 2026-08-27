@@ -156,6 +156,7 @@ export const fetchWebhookReplay = async(req,res)=>{
         },
         select:{
             id: true,
+            webhook_id: true,
             target_url: true,
             status_code: true,
             duration: true,
