@@ -170,7 +170,7 @@ Returns the details of a specific stored webhook, including its headers and body
 ### Replay a Webhook
 
 ```http
-POST /api/v1/webhook/:id/replay
+POST /api/v1/webhook/:webhook_id/replay
 ```
 
 Request body:
@@ -195,7 +195,7 @@ Example response:
 ### Get Replay History
 
 ```http
-GET /api/v1/webhook/:id/replay
+GET /api/v1/webhook/:webhook_id/replay
 ```
 
 Returns the replay history associated with a webhook.
