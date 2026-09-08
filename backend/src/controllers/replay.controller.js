@@ -147,21 +147,62 @@ export const webhookReplay = async (req, res) => {
     }
 };
 
-export const fetchWebhookReplay = async(req,res)=>{
-    const webhookID = req.params.id;
-    
-    const fetchedReplay = await prisma.replay.findMany({
-        where:{
-            webhook_id: webhookID,
-        },
-        select:{
-            id: true,
-            webhook_id: true,
-            target_url: true,
-            status_code: true,
-            duration: true,
-            success: true
-        }
-    });
-    return res.status(200).json(fetchedReplay);
-}
+export const fetchWebhookReplay = async (req, res) => {
+    try {
+        const webhookID = req.params.id;
+
+        const fetchedReplay = await prisma.replay.findMany({
+            where: {
+                webhook_id: webhookID,
+            },
+            select: {
+                id: true,
+                webhook_id: true,
+                target_url: true,
+                status_code: true,
+                duration: true,
+                success: true,
+                response_body: true,
+                created_at: true
+            },
+            orderBy: {
+                created_at: 'desc'
+            }
+        });
+        return res.status(200).json(fetchedReplay);
+    } catch (error) {
+        console.error("Error fetching replays:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to fetch replay history"
+        });
+    }
+};
+
+export const fetchAllReplays = async (req, res) => {
+    try {
+        const replays = await prisma.replay.findMany({
+            take: 100,
+            select: {
+                id: true,
+                webhook_id: true,
+                target_url: true,
+                status_code: true,
+                duration: true,
+                success: true,
+                response_body: true,
+                created_at: true
+            },
+            orderBy: {
+                created_at: 'desc'
+            }
+        });
+        return res.status(200).json(replays);
+    } catch (error) {
+        console.error("Error fetching all replays:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to fetch all replays"
+        });
+    }
+};
