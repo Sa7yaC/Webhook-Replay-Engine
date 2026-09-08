@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Search, RotateCw, MoreVertical, Play, Eye, Copy, AlertCircle } from 'lucide-react';
 
 export default function WebhookTable({
+  title = 'Recent Webhooks',
   webhooks = [],
   dateRange,
   selectedWebhook,
@@ -81,7 +82,7 @@ export default function WebhookTable({
 
   return (
     <div className="dashboard-card">
-      <h2 className="card-title">Recent Webhooks</h2>
+      <h2 className="card-title">{title}</h2>
 
       {/* Filter and Action Toolbar */}
       <div className="table-toolbar">

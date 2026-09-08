@@ -246,12 +246,36 @@ export async function replayWebhook(webhookIdString, targetUrl) {
 }
 
 /**
- * Fetch all replays.
- * Endpoint: GET /replay
+ * Fetch all replays, optionally filtered by dateRange.
+ * Endpoint: GET /replay?range=...&startDate=...
  */
-export async function getAllReplays() {
+export async function getAllReplays(dateRange) {
   try {
-    const result = await apiFetch('/replay');
+    const queryParams = new URLSearchParams();
+
+    if (dateRange && dateRange !== 'All time') {
+      queryParams.append('range', dateRange);
+
+      const now = new Date();
+      let startDate = null;
+
+      if (dateRange === 'Today') {
+        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+      } else if (dateRange === 'Last 24 hours') {
+        startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+      } else if (dateRange === 'Last 7 days') {
+        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      } else if (dateRange === 'Last 30 days') {
+        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      }
+
+      if (startDate) {
+        queryParams.append('startDate', startDate.toISOString());
+      }
+    }
+
+    const queryStr = queryParams.toString() ? `?${queryParams.toString()}` : '';
+    const result = await apiFetch(`/replay${queryStr}`);
     if (Array.isArray(result)) {
       return result.map(enrichReplay);
     }

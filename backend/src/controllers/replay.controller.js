@@ -181,8 +181,62 @@ export const fetchWebhookReplay = async (req, res) => {
 
 export const fetchAllReplays = async (req, res) => {
     try {
+        const limit = req.query.limit ? Number(req.query.limit) : 200;
+        const { range, startDate, endDate, from, to } = req.query;
+
+        const where = {};
+        let start = null;
+        let end = null;
+
+        const rawStart = startDate || from;
+        const rawEnd = endDate || to;
+
+        if (rawStart) {
+            const parsed = new Date(rawStart);
+            if (!isNaN(parsed.getTime())) {
+                start = parsed;
+            }
+        }
+
+        if (rawEnd) {
+            const parsed = new Date(rawEnd);
+            if (!isNaN(parsed.getTime())) {
+                end = parsed;
+            }
+        }
+
+        // If no explicit start date but range name is supplied
+        if (!start && range) {
+            const r = range.toLowerCase().trim();
+            const now = new Date();
+            if (r === 'today') {
+                start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+            } else if (r === 'last 24 hours' || r === '24h') {
+                start = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+            } else if (r === 'last 7 days' || r === '7d') {
+                start = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            } else if (r === 'last 30 days' || r === '30d') {
+                start = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+            }
+        }
+
+        if (start) {
+            where.created_at = {
+                ...(where.created_at || {}),
+                gte: start
+            };
+        }
+
+        if (end) {
+            where.created_at = {
+                ...(where.created_at || {}),
+                lte: end
+            };
+        }
+
         const replays = await prisma.replay.findMany({
-            take: 100,
+            where,
+            take: limit > 0 ? limit : undefined,
             select: {
                 id: true,
                 webhook_id: true,

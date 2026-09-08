@@ -63,6 +63,16 @@ export default function useWebhooks(dateRange = 'Today') {
     ? `${Math.round((failedCount / (successfulCount + failedCount || 1)) * 100)}%`
     : '0%';
 
+  const totalReplaysCount = allReplays.length;
+  const successfulReplaysCount = allReplays.filter(r => r.status === 'Completed' || r.success === true).length;
+  const failedReplaysCount = allReplays.filter(r => r.status === 'Failed' || r.success === false).length;
+  const replaySuccessPercent = totalReplaysCount > 0
+    ? `${Math.round((successfulReplaysCount / totalReplaysCount) * 100)}%`
+    : '100%';
+  const replayFailurePercent = totalReplaysCount > 0
+    ? `${Math.round((failedReplaysCount / totalReplaysCount) * 100)}%`
+    : '0%';
+
   const stats = {
     totalWebhooks: totalCount,
     successful: successfulCount,
@@ -70,6 +80,15 @@ export default function useWebhooks(dateRange = 'Today') {
     failed: failedCount,
     failureRate: totalCount > 0 ? `${failurePercent} rate` : '0% rate',
     totalReplays: allReplays.length,
+    timeRange: dateRange,
+  };
+
+  const replayStats = {
+    totalReplays: totalReplaysCount,
+    successful: successfulReplaysCount,
+    successRate: totalReplaysCount > 0 ? `${replaySuccessPercent} rate` : '100% rate',
+    failed: failedReplaysCount,
+    failureRate: totalReplaysCount > 0 ? `${replayFailurePercent} rate` : '0% rate',
     timeRange: dateRange,
   };
 
@@ -170,55 +189,32 @@ export default function useWebhooks(dateRange = 'Today') {
 
   // =====================================================================
   // Load all replays for the "Recent Replays" table
-  // by collecting replays from each webhook's history.
-  // Since there is no global "GET /replays" endpoint, we fetch replays
-  // for each unique webhook_id present in the webhook list.
   // =====================================================================
-  const loadAllReplays = useCallback(async (webhookList) => {
+  const loadAllReplays = useCallback(async (rangeToUse) => {
+    const range = rangeToUse !== undefined ? rangeToUse : dateRange;
     setAllReplaysLoading(true);
 
     try {
-      // 1. Try global /replay endpoint first
-      let replaysData = await getAllReplays();
-
-      // 2. Fallback to individual replay fetches if /replay is empty
-      if ((!replaysData || replaysData.length === 0) && webhookList && webhookList.length > 0) {
-        const uniqueIds = [...new Set(webhookList.map(w => w.webhook_id))].slice(0, 10);
-        const results = await Promise.allSettled(
-          uniqueIds.map(whId => getWebhookReplays(whId))
-        );
-
-        const combined = [];
-        results.forEach((r) => {
-          if (r.status === 'fulfilled' && Array.isArray(r.value)) {
-            combined.push(...r.value);
-          }
-        });
-        combined.sort((a, b) => (b.id || 0) - (a.id || 0));
-        replaysData = combined;
+      const replaysData = await getAllReplays(range);
+      if (mountedRef.current) {
+        setAllReplays(replaysData || []);
       }
-
-      setAllReplays(replaysData || []);
     } catch {
-      setAllReplays([]);
+      if (mountedRef.current) {
+        setAllReplays([]);
+      }
     } finally {
-      setAllReplaysLoading(false);
+      if (mountedRef.current) setAllReplaysLoading(false);
     }
-  }, []);
+  }, [dateRange]);
 
   // =====================================================================
-  // Initial load
+  // Initial & range-based load
   // =====================================================================
   useEffect(() => {
-    loadWebhooks();
-  }, [loadWebhooks]);
-
-  // When the webhook list loads, also fetch all replays
-  useEffect(() => {
-    if (webhooks.length > 0) {
-      loadAllReplays(webhooks);
-    }
-  }, [webhooks, loadAllReplays]);
+    loadWebhooks(dateRange);
+    loadAllReplays(dateRange);
+  }, [dateRange, loadWebhooks, loadAllReplays]);
 
   return {
     // Webhook list
@@ -239,9 +235,10 @@ export default function useWebhooks(dateRange = 'Today') {
     replaysLoading,
     replaysError,
 
-    // All replays (for the global Recent Replays table)
+    // All replays (for Replays views)
     allReplays,
     allReplaysLoading,
+    loadAllReplays,
 
     // Replay execution
     executeReplay,
@@ -249,5 +246,6 @@ export default function useWebhooks(dateRange = 'Today') {
 
     // Summary
     stats,
+    replayStats,
   };
 }

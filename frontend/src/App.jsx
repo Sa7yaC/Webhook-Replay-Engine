@@ -4,7 +4,9 @@ import Header from './components/Header';
 import SummaryCard from './components/SummaryCard';
 import WebhookTable from './components/WebhookTable';
 import RecentReplaysTable from './components/RecentReplaysTable';
+import ReplaysTable from './components/ReplaysTable';
 import WebhookDetails from './components/WebhookDetails';
+import SettingsView from './components/SettingsView';
 import ReplayModal from './components/ReplayModal';
 import NewWebhookModal from './components/NewWebhookModal';
 import Toast from './components/Toast';
@@ -48,11 +50,13 @@ export default function App() {
 
     allReplays,
     allReplaysLoading,
+    loadAllReplays,
 
     executeReplay,
     replaySubmitting,
 
     stats,
+    replayStats,
   } = useWebhooks(dateRange);
 
   // ---- Handlers -------------------------------------------------------
@@ -80,15 +84,60 @@ export default function App() {
   };
 
   const handleRefresh = async () => {
-    await loadWebhooks(dateRange);
-    showToast('Webhooks refreshed');
+    await Promise.allSettled([
+      loadWebhooks(dateRange),
+      loadAllReplays(dateRange)
+    ]);
+    showToast('Data refreshed');
   };
 
   const handleTestWebhookCreated = () => {
     // Re-fetch the real data to pick up the newly ingested webhook
     loadWebhooks(dateRange);
+    loadAllReplays(dateRange);
     showToast('Webhook ingestion triggered — refreshing list');
   };
+
+  const handleSelectWebhookFromReplay = (whId) => {
+    setActiveNav('Webhooks');
+    const target = webhooks.find(w => w.webhook_id === whId) || { webhook_id: whId, id: whId };
+    selectWebhook(target);
+  };
+
+  // Header metadata based on current active nav
+  const getHeaderMeta = () => {
+    switch (activeNav) {
+      case 'Webhooks':
+        return {
+          title: 'Webhooks',
+          subtitle: 'All captured webhook requests and payload inspection',
+          showDateFilter: true,
+        };
+      case 'Replays':
+        return {
+          title: 'Replays',
+          subtitle: 'Historical record of all webhook replay dispatches',
+          showDateFilter: true,
+        };
+      /*
+      case 'Settings':
+        return {
+          title: 'Settings',
+          subtitle: 'System configurations and endpoint security policies',
+          showDateFilter: false,
+        };
+      */
+      case 'Dashboard':
+      default:
+        return {
+          title: 'Dashboard',
+          subtitle: 'Monitor and replay your webhooks',
+          showDateFilter: true,
+        };
+    }
+  };
+
+  const headerMeta = getHeaderMeta();
 
   return (
     <div className="app-container">
@@ -102,65 +151,159 @@ export default function App() {
       <main className="main-wrapper">
         {/* Top Header */}
         <Header
+          title={headerMeta.title}
+          subtitle={headerMeta.subtitle}
           dateRange={dateRange}
           onDateRangeChange={handleDateRangeChange}
+          showDateFilter={headerMeta.showDateFilter}
           onNewWebhookClick={() => setNewWebhookModalOpen(true)}
         />
 
-        {/* 4 Summary Cards in One Row */}
-        <SummaryCard stats={stats} />
+        {/* 1. DASHBOARD VIEW */}
+        {activeNav === 'Dashboard' && (
+          <>
+            <SummaryCard stats={stats} type="webhooks" />
 
-        {/* Two-column Main Dashboard Layout */}
-        <div className="content-grid">
-          {/* Left Column: Recent Webhooks & Recent Replays */}
-          <div className="content-left">
-            <WebhookTable
-              webhooks={webhooks}
+            <div className="content-grid">
+              {/* Left Column: Recent Webhooks & Recent Replays */}
+              <div className="content-left">
+                <WebhookTable
+                  title="Recent Webhooks"
+                  webhooks={webhooks}
+                  dateRange={dateRange}
+                  selectedWebhook={selectedWebhook}
+                  onSelectWebhook={handleSelectWebhook}
+                  onReplayClick={handleOpenReplayModal}
+                  onRefresh={handleRefresh}
+                  isRefreshing={listLoading}
+                  isLoading={listLoading}
+                  error={listError}
+                  onCopyText={(text, msg) => showToast(msg)}
+                />
+
+                <RecentReplaysTable
+                  replays={allReplays}
+                  isLoading={allReplaysLoading}
+                  onSelectWebhookById={handleSelectWebhookFromReplay}
+                  onSelectReplay={(rep) => {
+                    const target = webhooks.find(w => w.webhook_id === rep.webhook_id);
+                    if (target) selectWebhook(target);
+                  }}
+                />
+
+                <footer className="app-footer">
+                  &copy; 2025 Webhook Replay. All rights reserved.
+                </footer>
+              </div>
+
+              {/* Right Column: Webhook Details Panel */}
+              <div className="content-right">
+                <WebhookDetails
+                  webhook={selectedWebhook}
+                  replays={replays}
+                  isLoading={detailLoading}
+                  error={detailError}
+                  replaysLoading={replaysLoading}
+                  replaysError={replaysError}
+                  onClose={() => selectWebhook(null)}
+                  onReplayClick={handleOpenReplayModal}
+                  onCopyText={(text, msg) => showToast(msg)}
+                />
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* 2. WEBHOOKS VIEW */}
+        {activeNav === 'Webhooks' && (
+          <>
+            {selectedWebhook ? (
+              <div className="content-grid">
+                <div className="content-left">
+                  <WebhookTable
+                    title="All Captured Webhooks"
+                    webhooks={webhooks}
+                    dateRange={dateRange}
+                    selectedWebhook={selectedWebhook}
+                    onSelectWebhook={handleSelectWebhook}
+                    onReplayClick={handleOpenReplayModal}
+                    onRefresh={handleRefresh}
+                    isRefreshing={listLoading}
+                    isLoading={listLoading}
+                    error={listError}
+                    onCopyText={(text, msg) => showToast(msg)}
+                  />
+                  <footer className="app-footer">
+                    &copy; 2025 Webhook Replay. All rights reserved.
+                  </footer>
+                </div>
+                <div className="content-right">
+                  <WebhookDetails
+                    webhook={selectedWebhook}
+                    replays={replays}
+                    isLoading={detailLoading}
+                    error={detailError}
+                    replaysLoading={replaysLoading}
+                    replaysError={replaysError}
+                    onClose={() => selectWebhook(null)}
+                    onReplayClick={handleOpenReplayModal}
+                    onCopyText={(text, msg) => showToast(msg)}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <WebhookTable
+                  title="All Captured Webhooks"
+                  webhooks={webhooks}
+                  dateRange={dateRange}
+                  selectedWebhook={selectedWebhook}
+                  onSelectWebhook={handleSelectWebhook}
+                  onReplayClick={handleOpenReplayModal}
+                  onRefresh={handleRefresh}
+                  isRefreshing={listLoading}
+                  isLoading={listLoading}
+                  error={listError}
+                  onCopyText={(text, msg) => showToast(msg)}
+                />
+                <footer className="app-footer">
+                  &copy; 2025 Webhook Replay. All rights reserved.
+                </footer>
+              </div>
+            )}
+          </>
+        )}
+
+        {/* 3. REPLAYS VIEW */}
+        {activeNav === 'Replays' && (
+          <div style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <ReplaysTable
+              replays={allReplays}
               dateRange={dateRange}
-              selectedWebhook={selectedWebhook}
-              onSelectWebhook={handleSelectWebhook}
-              onReplayClick={handleOpenReplayModal}
+              isLoading={allReplaysLoading}
+              isRefreshing={allReplaysLoading}
               onRefresh={handleRefresh}
-              isRefreshing={listLoading}
-              isLoading={listLoading}
-              error={listError}
+              onSelectWebhookById={handleSelectWebhookFromReplay}
+              onReplayClick={handleOpenReplayModal}
               onCopyText={(text, msg) => showToast(msg)}
             />
 
-            <RecentReplaysTable
-              replays={allReplays}
-              isLoading={allReplaysLoading}
-              onSelectWebhookById={(whId) => {
-                const target = webhooks.find(w => w.webhook_id === whId);
-                if (target) selectWebhook(target);
-              }}
-              onSelectReplay={(rep) => {
-                const target = webhooks.find(w => w.webhook_id === rep.webhook_id);
-                if (target) selectWebhook(target);
-              }}
-            />
-
-            {/* Centered Footer */}
             <footer className="app-footer">
               &copy; 2025 Webhook Replay. All rights reserved.
             </footer>
           </div>
+        )}
 
-          {/* Right Column: Webhook Details Panel */}
-          <div className="content-right">
-            <WebhookDetails
-              webhook={selectedWebhook}
-              replays={replays}
-              isLoading={detailLoading}
-              error={detailError}
-              replaysLoading={replaysLoading}
-              replaysError={replaysError}
-              onClose={() => selectWebhook(null)}
-              onReplayClick={handleOpenReplayModal}
-              onCopyText={(text, msg) => showToast(msg)}
-            />
+        {/* 4. SETTINGS VIEW (temporarily commented out) */}
+        {/* activeNav === 'Settings' && (
+          <div style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <SettingsView onCopyText={(text, msg) => showToast(msg)} />
+
+            <footer className="app-footer">
+              &copy; 2025 Webhook Replay. All rights reserved.
+            </footer>
           </div>
-        </div>
+        ) */}
       </main>
 
       {/* Modals & Feedback */}

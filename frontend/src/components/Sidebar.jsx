@@ -13,7 +13,7 @@ export default function Sidebar({ activeNav = 'Dashboard', setActiveNav }) {
     { name: 'Dashboard', icon: Home },
     { name: 'Webhooks', icon: Code2 },
     { name: 'Replays', icon: RotateCw },
-    { name: 'Settings', icon: Settings },
+    // { name: 'Settings', icon: Settings },
   ];
 
   return (

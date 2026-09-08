@@ -1,7 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Calendar, ChevronDown, Plus, Check } from 'lucide-react';
 
-export default function Header({ dateRange = 'Today', onDateRangeChange, onNewWebhookClick }) {
+export default function Header({ 
+  title = 'Dashboard', 
+  subtitle = 'Monitor and replay your webhooks', 
+  dateRange = 'Today', 
+  onDateRangeChange, 
+  onNewWebhookClick,
+  showDateFilter = true
+}) {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -25,23 +32,24 @@ export default function Header({ dateRange = 'Today', onDateRangeChange, onNewWe
   return (
     <header className="main-header">
       <div>
-        <h1 className="header-title">Dashboard</h1>
-        <p className="header-subtitle">Monitor and replay your webhooks</p>
+        <h1 className="header-title">{title}</h1>
+        <p className="header-subtitle">{subtitle}</p>
       </div>
 
       <div className="header-actions">
         {/* Date Filter Dropdown matching reference image */}
-        <div style={{ position: 'relative' }} ref={dropdownRef}>
-          <button 
-            className="btn-secondary" 
-            onClick={() => setShowDropdown(!showDropdown)}
-            title="Filter by date range"
-            type="button"
-          >
-            <Calendar size={15} color="#64748b" />
-            <span>{dateRange}</span>
-            <ChevronDown size={14} color="#64748b" style={{ transform: showDropdown ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s ease' }} />
-          </button>
+        {showDateFilter && (
+          <div style={{ position: 'relative' }} ref={dropdownRef}>
+            <button 
+              className="btn-secondary" 
+              onClick={() => setShowDropdown(!showDropdown)}
+              title="Filter by date range"
+              type="button"
+            >
+              <Calendar size={15} color="#64748b" />
+              <span>{dateRange}</span>
+              <ChevronDown size={14} color="#64748b" style={{ transform: showDropdown ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s ease' }} />
+            </button>
 
           {showDropdown && (
             <div 
@@ -94,6 +102,7 @@ export default function Header({ dateRange = 'Today', onDateRangeChange, onNewWe
             </div>
           )}
         </div>
+      )}
 
         {/* New Webhook ID Trigger */}
         <button 
