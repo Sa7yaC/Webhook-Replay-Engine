@@ -315,15 +315,15 @@ export default function WebhookTable({
           <div>
             <select
               className="page-size-select"
-              value={`${pageSize} / page`}
+              value={pageSize}
               onChange={(e) => {
-                setPageSize(parseInt(e.target.value));
+                setPageSize(Number(e.target.value));
                 setCurrentPage(1);
               }}
             >
-              <option value="10">10 / page</option>
-              <option value="20">20 / page</option>
-              <option value="50">50 / page</option>
+              <option value={10}>10 / page</option>
+              <option value={20}>20 / page</option>
+              <option value={50}>50 / page</option>
             </select>
           </div>
         </div>
