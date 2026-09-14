@@ -1,61 +1,84 @@
 /* Webhook Replay Engine - Global Design System */
 
 :root {
-  /* Color Palette */
-  --bg-app: #f8fafc;
-  --bg-card: #ffffff;
-  --bg-sidebar: #0b132b;
-  --bg-sidebar-hover: rgba(255, 255, 255, 0.05);
-  --bg-sidebar-card: #151e34;
-  --bg-code: #f8fafc;
-  --bg-code-dark: #0f172a;
-  
-  /* Primary Indigo / Purple */
-  --primary: #4f46e5;
-  --primary-hover: #4338ca;
-  --primary-light: #eef2ff;
-  --primary-subtle: #f5f3ff;
-  --primary-text: #4338ca;
-  --accent-purple: #6366f1;
+  /* Color Palette - 60 / 30 / 10 Rule */
+  /* 60%: Near-black application background */
+  --bg-app: #171717;
+  --bg-app-alt: #1D1D1D;
+  --bg-app-card-dark: #202020;
 
+  /* 30%: White content surfaces */
+  --bg-card: #FFFFFF;
+  --bg-card-secondary: #F5F5F5;
+  --bg-card-muted: #FAFAFA;
+
+  /* Sidebar */
+  --bg-sidebar: #121212;
+  --bg-sidebar-hover: rgba(255, 255, 255, 0.07);
+  --bg-sidebar-card: #1C1C1C;
+
+  /* Code surfaces */
+  --bg-code: #111111;
+  --bg-code-dark: #0A0A0A;
+
+  /* 10%: Electric Blue Accent */
+  --primary: #002FFF;
+  --primary-hover: #1747FF;
+  --primary-light: rgba(0, 47, 255, 0.08);
+  --primary-subtle: rgba(0, 47, 255, 0.04);
+  --primary-text: #002FFF;
+  --primary-glow: rgba(0, 47, 255, 0.25);
+
+  /* Semantic Colors (Restrained) */
   /* Success Green */
-  --success: #16a34a;
-  --success-bg: #ecfdf5;
-  --success-text: #15803d;
-  --success-border: #bbf7d0;
+  --success: #19A463;
+  --success-bg: #EAF7F0;
+  --success-text: #137A4B;
+  --success-border: #BCE9D2;
 
   /* Danger / Failed Red */
-  --danger: #ef4444;
-  --danger-bg: #fef2f2;
-  --danger-text: #b91c1c;
-  --danger-border: #fecaca;
+  --danger: #E53935;
+  --danger-bg: #FDF0EF;
+  --danger-text: #B71C1C;
+  --danger-border: #F8C3C1;
 
   /* Warning / Timeout Orange */
-  --warning: #f59e0b;
-  --warning-bg: #fffbeb;
-  --warning-text: #b45309;
+  --warning: #F59E0B;
+  --warning-bg: #FEF8EC;
+  --warning-text: #B45309;
+  --warning-border: #FCE6AC;
 
   /* Neutrals */
-  --text-main: #0f172a;
-  --text-muted: #64748b;
-  --text-subtle: #94a3b8;
-  --border-light: #edf2f7;
-  --border-input: #e2e8f0;
-  --border-subtle: #f1f5f9;
+  --text-black: #000000;
+  --text-main: #111111;
+  --text-muted: #555555;
+  --text-subtle: #7A7A7A;
+  --text-inverse: #FFFFFF;
+  --text-inverse-muted: #8E8E93;
+
+  --border-card: #E6E6E6;
+  --border-card-subtle: #EEEEEE;
+  --border-input: #DCDCDC;
+  --border-dark: #2A2A2A;
+  --border-dark-subtle: #1F1F1F;
 
   /* Typography */
+  --font-title: 'League Gothic', sans-serif;
+  --font-metric: 'Bruno Ace', sans-serif;
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', Menlo, Monaco, Consolas, monospace;
 
   /* Elevation */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
-  --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
-  --shadow-modal: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-card: 0 4px 18px rgba(0, 0, 0, 0.12);
+  --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.16);
+  --shadow-modal: 0 24px 38px -4px rgba(0, 0, 0, 0.4), 0 12px 18px -6px rgba(0, 0, 0, 0.3);
 
   /* Radius */
   --radius-sm: 6px;
   --radius-md: 8px;
-  --radius-lg: 12px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
   --radius-full: 9999px;
 }
 
@@ -69,7 +92,7 @@ html, body {
   height: 100%;
   font-family: var(--font-sans);
   background-color: var(--bg-app);
-  color: var(--text-main);
+  color: var(--text-inverse);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -86,16 +109,16 @@ html, body {
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: var(--bg-app);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #333333;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #444444;
 }
 
 button {
@@ -115,15 +138,39 @@ input, select {
 input:focus, select:focus, button:focus-visible {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.15);
+  box-shadow: 0 0 0 2px var(--primary-glow);
 }
 
-/* Common utility classes */
+/* Typography Reusable Classes */
+.metric-title {
+  font-family: var(--font-title);
+  color: var(--text-black);
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+
+.metric-value {
+  font-family: var(--font-metric);
+  color: var(--primary);
+  line-height: 0.95;
+  letter-spacing: -2px;
+}
+
+.ui-text {
+  font-family: var(--font-sans);
+}
+
+.code-text {
+  font-family: var(--font-mono);
+}
+
+/* Common Utility Classes */
 .badge-completed {
   background-color: var(--success-bg);
   color: var(--success-text);
+  border: 1px solid var(--success-border);
   font-size: 11.5px;
-  font-weight: 500;
+  font-weight: 600;
   padding: 2.5px 8px;
   border-radius: var(--radius-sm);
   display: inline-flex;
@@ -134,8 +181,9 @@ input:focus, select:focus, button:focus-visible {
 .badge-failed {
   background-color: var(--danger-bg);
   color: var(--danger-text);
+  border: 1px solid var(--danger-border);
   font-size: 11.5px;
-  font-weight: 500;
+  font-weight: 600;
   padding: 2.5px 8px;
   border-radius: var(--radius-sm);
   display: inline-flex;
@@ -146,8 +194,9 @@ input:focus, select:focus, button:focus-visible {
 .badge-timeout {
   background-color: var(--warning-bg);
   color: var(--warning-text);
+  border: 1px solid var(--warning-border);
   font-size: 11.5px;
-  font-weight: 500;
+  font-weight: 600;
   padding: 2.5px 8px;
   border-radius: var(--radius-sm);
   display: inline-flex;
@@ -159,54 +208,55 @@ input:focus, select:focus, button:focus-visible {
   font-family: var(--font-mono);
   font-size: 12.5px;
   font-weight: 500;
-  color: var(--primary-text);
+  color: var(--primary);
   text-decoration: none;
   cursor: pointer;
   transition: color 0.15s;
 }
 
 .mono-link:hover {
-  color: var(--primary);
+  color: var(--primary-hover);
   text-decoration: underline;
 }
 
-/* Smooth code syntax highlighting */
+/* Smooth Code Syntax Highlighting (Dark Theme) */
 .json-key {
-  color: #1e40af;
+  color: #4D7CFF;
   font-weight: 600;
 }
 
 .json-string {
-  color: #0d9488;
+  color: #10B981;
 }
 
 .json-number {
-  color: #d97706;
+  color: #F59E0B;
 }
 
 .json-boolean {
-  color: #7c3aed;
+  color: #A855F7;
 }
 
 .json-null {
-  color: #64748b;
+  color: #71717A;
 }
 
-/* Toast container */
+/* Toast notification */
 .toast-notification {
   position: fixed;
   bottom: 24px;
   right: 24px;
-  background: #0f172a;
-  color: #ffffff;
-  padding: 10px 16px;
-  border-radius: 8px;
+  background: #111111;
+  color: #FFFFFF;
+  border: 1px solid #333333;
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
   font-size: 13px;
   font-weight: 500;
   display: flex;
   align-items: center;
   gap: 8px;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
   z-index: 9999;
   animation: slideUpFade 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }

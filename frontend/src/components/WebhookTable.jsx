@@ -1,5 +1,14 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { Search, RotateCw, MoreVertical, Play, Eye, Copy, AlertCircle } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import {
+  Search01Icon,
+  ReloadIcon,
+  MoreVerticalIcon,
+  PlayIcon,
+  ViewIcon,
+  Copy01Icon,
+  AlertCircleIcon
+} from '@hugeicons/core-free-icons';
 
 export default function WebhookTable({
   title = 'Recent Webhooks',
@@ -87,7 +96,7 @@ export default function WebhookTable({
       {/* Filter and Action Toolbar */}
       <div className="table-toolbar">
         <div className="search-wrapper">
-          <Search className="search-icon" />
+          <HugeiconsIcon icon={Search01Icon} className="search-icon" size={16} />
           <input
             type="text"
             className="search-input"
@@ -114,7 +123,7 @@ export default function WebhookTable({
             disabled={isRefreshing}
             title="Refresh webhooks list"
           >
-            <RotateCw size={14} />
+            <HugeiconsIcon icon={ReloadIcon} size={14} />
             <span>Refresh</span>
           </button>
         </div>
@@ -134,7 +143,7 @@ export default function WebhookTable({
           fontSize: '13px',
           color: '#b91c1c'
         }}>
-          <AlertCircle size={16} />
+          <HugeiconsIcon icon={AlertCircleIcon} size={16} />
           <span>Unable to load webhooks. {error}</span>
           <button
             onClick={onRefresh}
@@ -172,9 +181,9 @@ export default function WebhookTable({
             {/* Loading State */}
             {isLoading && webhooks.length === 0 ? (
               <tr>
-                <td colSpan="7" style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>
+                <td colSpan="7" style={{ textAlign: 'center', padding: '40px', color: '#7A7A7A' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-                    <RotateCw size={20} className="spinning" style={{ color: '#6366f1' }} />
+                    <HugeiconsIcon icon={ReloadIcon} size={20} className="spinning" style={{ color: 'var(--primary)' }} />
                     <span>Loading webhooks...</span>
                   </div>
                 </td>
@@ -232,7 +241,7 @@ export default function WebhookTable({
                         onClick={() => setActiveMenuId(activeMenuId === wh.webhook_id ? null : wh.webhook_id)}
                         title="Actions"
                       >
-                        <MoreVertical size={16} />
+                        <HugeiconsIcon icon={MoreVerticalIcon} size={16} />
                       </button>
 
                       {/* Dropdown Menu */}
@@ -245,7 +254,7 @@ export default function WebhookTable({
                               setActiveMenuId(null);
                             }}
                           >
-                            <Eye size={14} />
+                            <HugeiconsIcon icon={ViewIcon} size={14} />
                             <span>View Details</span>
                           </button>
                           <button
@@ -255,7 +264,7 @@ export default function WebhookTable({
                               setActiveMenuId(null);
                             }}
                           >
-                            <Play size={14} />
+                            <HugeiconsIcon icon={PlayIcon} size={14} />
                             <span>Replay</span>
                           </button>
                           <button
@@ -265,7 +274,7 @@ export default function WebhookTable({
                               setActiveMenuId(null);
                             }}
                           >
-                            <Copy size={14} />
+                            <HugeiconsIcon icon={Copy01Icon} size={14} />
                             <span>Copy ID</span>
                           </button>
                         </div>

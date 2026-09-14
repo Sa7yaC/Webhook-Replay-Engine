@@ -1,18 +1,14 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { 
-  Search, 
-  RotateCw, 
-  MoreVertical, 
-  Play, 
-  Eye, 
-  Copy, 
-  AlertCircle,
-  ExternalLink, 
-  Clock, 
-  CheckCircle2, 
-  XCircle,
-  X
-} from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import {
+  Search01Icon,
+  ReloadIcon,
+  MoreVerticalIcon,
+  PlayIcon,
+  ViewIcon,
+  Copy01Icon,
+  Cancel01Icon
+} from '@hugeicons/core-free-icons';
 
 export default function ReplaysTable({
   replays = [],
@@ -98,7 +94,7 @@ export default function ReplaysTable({
       {/* Filter and Action Toolbar */}
       <div className="table-toolbar">
         <div className="search-wrapper">
-          <Search className="search-icon" />
+          <HugeiconsIcon icon={Search01Icon} className="search-icon" size={16} />
           <input
             type="text"
             className="search-input"
@@ -125,7 +121,7 @@ export default function ReplaysTable({
             disabled={isRefreshing}
             title="Refresh replays list"
           >
-            <RotateCw size={14} />
+            <HugeiconsIcon icon={ReloadIcon} size={14} />
             <span>Refresh</span>
           </button>
         </div>
@@ -149,9 +145,9 @@ export default function ReplaysTable({
           <tbody>
             {isLoading && replays.length === 0 ? (
               <tr>
-                <td colSpan="8" style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>
+                <td colSpan="8" style={{ textAlign: 'center', padding: '40px', color: '#7A7A7A' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-                    <RotateCw size={20} className="spinning" style={{ color: '#6366f1' }} />
+                    <HugeiconsIcon icon={ReloadIcon} size={20} className="spinning" style={{ color: 'var(--primary)' }} />
                     <span>Loading replays...</span>
                   </div>
                 </td>
@@ -236,7 +232,7 @@ export default function ReplaysTable({
                         onClick={() => setActiveMenuId(activeMenuId === replayKey ? null : replayKey)}
                         title="Actions"
                       >
-                        <MoreVertical size={16} />
+                        <HugeiconsIcon icon={MoreVerticalIcon} size={16} />
                       </button>
 
                       {/* Dropdown Menu */}
@@ -249,7 +245,7 @@ export default function ReplaysTable({
                               setActiveMenuId(null);
                             }}
                           >
-                            <Eye size={14} />
+                            <HugeiconsIcon icon={ViewIcon} size={14} />
                             <span>View Details</span>
                           </button>
                           <button
@@ -259,7 +255,7 @@ export default function ReplaysTable({
                               setActiveMenuId(null);
                             }}
                           >
-                            <Play size={14} />
+                            <HugeiconsIcon icon={PlayIcon} size={14} />
                             <span>Replay Again</span>
                           </button>
                           <button
@@ -269,7 +265,7 @@ export default function ReplaysTable({
                               setActiveMenuId(null);
                             }}
                           >
-                            <Copy size={14} />
+                            <HugeiconsIcon icon={Copy01Icon} size={14} />
                             <span>Copy URL</span>
                           </button>
                           <button
@@ -279,7 +275,7 @@ export default function ReplaysTable({
                               setActiveMenuId(null);
                             }}
                           >
-                            <Copy size={14} />
+                            <HugeiconsIcon icon={Copy01Icon} size={14} />
                             <span>Copy Webhook ID</span>
                           </button>
                         </div>
@@ -365,7 +361,7 @@ export default function ReplaysTable({
                 onClick={() => setInspectReplay(null)}
                 title="Close"
               >
-                <X size={18} />
+                <HugeiconsIcon icon={Cancel01Icon} size={18} />
               </button>
             </div>
 
@@ -414,7 +410,7 @@ export default function ReplaysTable({
                     onClick={() => onCopyText?.(inspectReplay.target_url, 'Target URL copied')}
                     title="Copy URL"
                   >
-                    <Copy size={13} />
+                    <HugeiconsIcon icon={Copy01Icon} size={13} />
                   </button>
                 </div>
                 <div style={{
@@ -440,7 +436,7 @@ export default function ReplaysTable({
                     onClick={() => onCopyText?.(inspectReplay.response_body, 'Response body copied')}
                     title="Copy Response"
                   >
-                    <Copy size={13} />
+                    <HugeiconsIcon icon={Copy01Icon} size={13} />
                   </button>
                 </div>
                 <pre style={{
@@ -474,7 +470,7 @@ export default function ReplaysTable({
                   onReplayClick?.({ webhook_id: target.webhook_id, target_url: target.target_url });
                 }}
               >
-                <Play size={14} />
+                <HugeiconsIcon icon={PlayIcon} size={14} />
                 <span>Replay Again</span>
               </button>
             </div>

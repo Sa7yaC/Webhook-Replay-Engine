@@ -16,7 +16,7 @@ import './App.css';
 
 export default function App() {
   const [activeNav, setActiveNav] = useState('Dashboard');
-  const [dateRange, setDateRange] = useState('Today');
+  const [dateRange, setDateRange] = useState('Last 7 days');
   const [replayModalOpen, setReplayModalOpen] = useState(false);
   const [replayTargetWebhook, setReplayTargetWebhook] = useState(null);
   const [newWebhookModalOpen, setNewWebhookModalOpen] = useState(false);
@@ -192,7 +192,7 @@ export default function App() {
                 />
 
                 <footer className="app-footer">
-                  &copy; 2025 Webhook Replay. All rights reserved.
+                  &copy; 2025 HookPal. All rights reserved.
                 </footer>
               </div>
 
@@ -267,7 +267,7 @@ export default function App() {
                   onCopyText={(text, msg) => showToast(msg)}
                 />
                 <footer className="app-footer">
-                  &copy; 2025 Webhook Replay. All rights reserved.
+                  &copy; 2025 HookPal. All rights reserved.
                 </footer>
               </div>
             )}
@@ -289,7 +289,7 @@ export default function App() {
             />
 
             <footer className="app-footer">
-              &copy; 2025 Webhook Replay. All rights reserved.
+              &copy; 2025 HookPal. All rights reserved.
             </footer>
           </div>
         )}

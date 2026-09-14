@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { X, Copy, Check, Terminal, Send } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import {
+  Cancel01Icon,
+  Copy01Icon,
+  CheckIcon,
+  SourceCodeIcon,
+  SentIcon
+} from '@hugeicons/core-free-icons';
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api/v1';
@@ -60,7 +67,7 @@ export default function NewWebhookModal({ isOpen, onClose, onTestWebhookCreated 
         <div className="modal-header">
           <h3 className="modal-title">New Webhook Endpoint</h3>
           <button className="icon-btn" onClick={onClose}>
-            <X size={18} />
+            <HugeiconsIcon icon={Cancel01Icon} size={18} />
           </button>
         </div>
 
@@ -84,7 +91,7 @@ export default function NewWebhookModal({ isOpen, onClose, onTestWebhookCreated 
                 onClick={() => copyToClipboard(endpointUrl, 'url')}
                 title="Copy URL"
               >
-                {copiedUrl ? <Check size={14} color="#16a34a" /> : <Copy size={14} />}
+                {copiedUrl ? <HugeiconsIcon icon={CheckIcon} size={14} color="#19A463" /> : <HugeiconsIcon icon={Copy01Icon} size={14} />}
               </button>
             </div>
           </div>
@@ -92,7 +99,7 @@ export default function NewWebhookModal({ isOpen, onClose, onTestWebhookCreated 
           <div className="form-group">
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Terminal size={14} />
+                <HugeiconsIcon icon={SourceCodeIcon} size={14} />
                 <span>Example cURL Request</span>
               </label>
               <button
@@ -100,14 +107,15 @@ export default function NewWebhookModal({ isOpen, onClose, onTestWebhookCreated 
                 style={{ padding: '3px 8px', fontSize: '11.5px' }}
                 onClick={() => copyToClipboard(curlCommand, 'curl')}
               >
-                {copiedCurl ? <Check size={12} color="#16a34a" /> : <Copy size={12} />}
+                {copiedCurl ? <HugeiconsIcon icon={CheckIcon} size={12} color="#19A463" /> : <HugeiconsIcon icon={Copy01Icon} size={12} />}
                 <span>{copiedCurl ? 'Copied' : 'Copy'}</span>
               </button>
             </div>
             <pre
               style={{
-                background: '#0f172a',
-                color: '#e2e8f0',
+                background: '#111111',
+                color: '#F5F5F5',
+                border: '1px solid #262626',
                 padding: '12px',
                 borderRadius: '8px',
                 fontSize: '11.5px',
@@ -126,7 +134,7 @@ export default function NewWebhookModal({ isOpen, onClose, onTestWebhookCreated 
             Close
           </button>
           <button className="btn-primary" onClick={handleSimulateWebhook}>
-            <Send size={14} />
+            <HugeiconsIcon icon={SentIcon} size={14} />
             <span>Send Test Webhook</span>
           </button>
         </div>
