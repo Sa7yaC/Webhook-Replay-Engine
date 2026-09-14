@@ -154,21 +154,39 @@ function enrichReplay(raw) {
 // ---------------------------------------------------------------------------
 
 /**
- * Fetch all webhooks, optionally filtered by dateRange.
- * Endpoint: GET /webhook?range=...&startDate=...
+ * Fetch all webhooks, optionally filtered by dateRange or custom start/end dates.
+ * Endpoint: GET /webhook?range=...&startDate=...&endDate=...&limit=...
  * Returns: { webhooks: Array, count: number }
  */
-export async function getWebhooks(dateRange) {
+export async function getWebhooks(options) {
   const queryParams = new URLSearchParams();
 
-  if (dateRange && dateRange !== 'All time') {
+  let dateRange = typeof options === 'string' ? options : options?.dateRange;
+  let customStartDate = typeof options === 'object' ? options?.startDate : null;
+  let customEndDate = typeof options === 'object' ? options?.endDate : null;
+  let limit = typeof options === 'object' ? options?.limit : null;
+
+  if (limit) {
+    queryParams.append('limit', String(limit));
+  }
+
+  if (customStartDate) {
+    const s = customStartDate instanceof Date ? customStartDate.toISOString() : String(customStartDate);
+    queryParams.append('startDate', s);
+  }
+
+  if (customEndDate) {
+    const e = customEndDate instanceof Date ? customEndDate.toISOString() : String(customEndDate);
+    queryParams.append('endDate', e);
+  }
+
+  if (!customStartDate && dateRange && dateRange !== 'All time') {
     queryParams.append('range', dateRange);
 
     const now = new Date();
     let startDate = null;
 
     if (dateRange === 'Today') {
-      // Start of current day in local time
       startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
     } else if (dateRange === 'Last 24 hours') {
       startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
@@ -246,14 +264,33 @@ export async function replayWebhook(webhookIdString, targetUrl) {
 }
 
 /**
- * Fetch all replays, optionally filtered by dateRange.
- * Endpoint: GET /replay?range=...&startDate=...
+ * Fetch all replays, optionally filtered by dateRange or custom start/end dates.
+ * Endpoint: GET /replay?range=...&startDate=...&endDate=...&limit=...
  */
-export async function getAllReplays(dateRange) {
+export async function getAllReplays(options) {
   try {
     const queryParams = new URLSearchParams();
 
-    if (dateRange && dateRange !== 'All time') {
+    let dateRange = typeof options === 'string' ? options : options?.dateRange;
+    let customStartDate = typeof options === 'object' ? options?.startDate : null;
+    let customEndDate = typeof options === 'object' ? options?.endDate : null;
+    let limit = typeof options === 'object' ? options?.limit : null;
+
+    if (limit) {
+      queryParams.append('limit', String(limit));
+    }
+
+    if (customStartDate) {
+      const s = customStartDate instanceof Date ? customStartDate.toISOString() : String(customStartDate);
+      queryParams.append('startDate', s);
+    }
+
+    if (customEndDate) {
+      const e = customEndDate instanceof Date ? customEndDate.toISOString() : String(customEndDate);
+      queryParams.append('endDate', e);
+    }
+
+    if (!customStartDate && dateRange && dateRange !== 'All time') {
       queryParams.append('range', dateRange);
 
       const now = new Date();

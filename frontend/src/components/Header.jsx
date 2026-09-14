@@ -1,5 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Calendar, ChevronDown, Plus, Check } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import {
+  Calendar01Icon,
+  ChevronDownIcon,
+  Add01Icon,
+  CheckIcon
+} from '@hugeicons/core-free-icons';
 
 export default function Header({ 
   title = 'Dashboard', 
@@ -46,9 +52,9 @@ export default function Header({
               title="Filter by date range"
               type="button"
             >
-              <Calendar size={15} color="#64748b" />
+              <HugeiconsIcon icon={Calendar01Icon} size={15} color="#8E8E93" strokeWidth={2} />
               <span>{dateRange}</span>
-              <ChevronDown size={14} color="#64748b" style={{ transform: showDropdown ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s ease' }} />
+              <HugeiconsIcon icon={ChevronDownIcon} size={14} color="#8E8E93" strokeWidth={2} style={{ transform: showDropdown ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s ease' }} />
             </button>
 
           {showDropdown && (
@@ -58,12 +64,12 @@ export default function Header({
                 right: 0,
                 top: '100%',
                 marginTop: '6px',
-                background: '#ffffff',
-                border: '1px solid #e2e8f0',
+                background: '#FFFFFF',
+                border: '1px solid #E6E6E6',
                 borderRadius: '8px',
-                boxShadow: '0 10px 20px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05)',
+                boxShadow: '0 12px 28px rgba(0, 0, 0, 0.25)',
                 zIndex: 50,
-                width: '150px',
+                width: '155px',
                 padding: '4px'
               }}
             >
@@ -84,9 +90,9 @@ export default function Header({
                       alignItems: 'center',
                       justifyContent: 'space-between',
                       fontWeight: isSelected ? 600 : 400,
-                      color: isSelected ? '#4f46e5' : '#334155',
-                      backgroundColor: isSelected ? '#f5f3ff' : 'transparent',
-                      padding: '7px 10px',
+                      color: isSelected ? '#002FFF' : '#111111',
+                      backgroundColor: isSelected ? 'rgba(0, 47, 255, 0.08)' : 'transparent',
+                      padding: '8px 10px',
                       borderRadius: '6px',
                       border: 'none',
                       cursor: 'pointer',
@@ -95,7 +101,7 @@ export default function Header({
                     }}
                   >
                     <span>{range}</span>
-                    {isSelected && <Check size={14} color="#4f46e5" strokeWidth={2.5} />}
+                    {isSelected && <HugeiconsIcon icon={CheckIcon} size={14} color="#002FFF" strokeWidth={2.5} />}
                   </button>
                 );
               })}
@@ -110,7 +116,7 @@ export default function Header({
           onClick={onNewWebhookClick}
           title="Create or test a new Webhook ID"
         >
-          <Plus size={15} strokeWidth={2.5} />
+          <HugeiconsIcon icon={Add01Icon} size={15} strokeWidth={2.5} />
           <span>New Webhook ID</span>
         </button>
       </div>

@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
+import { HugeiconsIcon } from '@hugeicons/react';
 import { 
-  Server, 
-  ShieldCheck, 
-  Database, 
-  Copy, 
-  Check, 
-  Terminal, 
-  Globe, 
-  Zap,
-  Info
-} from 'lucide-react';
+  ServerIcon, 
+  ShieldCheckIcon, 
+  Database01Icon, 
+  Copy01Icon, 
+  CheckIcon, 
+  Globe02Icon
+} from '@hugeicons/core-free-icons';
 
 export default function SettingsView({ onCopyText }) {
   const [copiedCurl, setCopiedCurl] = useState(false);
@@ -39,18 +37,18 @@ export default function SettingsView({ onCopyText }) {
             width: '44px',
             height: '44px',
             borderRadius: '10px',
-            backgroundColor: '#eef2ff',
-            color: '#4f46e5',
+            backgroundColor: 'rgba(0, 47, 255, 0.08)',
+            color: 'var(--primary)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center'
           }}>
-            <Server size={22} />
+            <HugeiconsIcon icon={ServerIcon} size={22} />
           </div>
           <div>
-            <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 500 }}>Backend API</div>
-            <div style={{ fontSize: '15px', fontWeight: 600, color: '#1e293b' }}>Active & Healthy</div>
-            <div style={{ fontSize: '11.5px', color: '#10b981', marginTop: '2px' }}>Port 3000 • Express</div>
+            <div style={{ fontSize: '12px', color: '#666666', fontWeight: 500 }}>Backend API</div>
+            <div style={{ fontSize: '15px', fontWeight: 600, color: '#111111' }}>Active & Healthy</div>
+            <div style={{ fontSize: '11.5px', color: 'var(--success)', marginTop: '2px' }}>Port 3000 • Express</div>
           </div>
         </div>
 
@@ -59,18 +57,18 @@ export default function SettingsView({ onCopyText }) {
             width: '44px',
             height: '44px',
             borderRadius: '10px',
-            backgroundColor: '#ecfdf5',
-            color: '#059669',
+            backgroundColor: 'var(--success-bg)',
+            color: 'var(--success)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center'
           }}>
-            <Database size={22} />
+            <HugeiconsIcon icon={Database01Icon} size={22} />
           </div>
           <div>
-            <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 500 }}>Storage Engine</div>
-            <div style={{ fontSize: '15px', fontWeight: 600, color: '#1e293b' }}>PostgreSQL 17</div>
-            <div style={{ fontSize: '11.5px', color: '#10b981', marginTop: '2px' }}>Prisma ORM connected</div>
+            <div style={{ fontSize: '12px', color: '#666666', fontWeight: 500 }}>Storage Engine</div>
+            <div style={{ fontSize: '15px', fontWeight: 600, color: '#111111' }}>PostgreSQL 17</div>
+            <div style={{ fontSize: '11.5px', color: 'var(--success)', marginTop: '2px' }}>Prisma ORM connected</div>
           </div>
         </div>
 
@@ -79,18 +77,18 @@ export default function SettingsView({ onCopyText }) {
             width: '44px',
             height: '44px',
             borderRadius: '10px',
-            backgroundColor: '#f5f3ff',
-            color: '#7c3aed',
+            backgroundColor: 'rgba(0, 47, 255, 0.08)',
+            color: 'var(--primary)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center'
           }}>
-            <ShieldCheck size={22} />
+            <HugeiconsIcon icon={ShieldCheckIcon} size={22} />
           </div>
           <div>
-            <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 500 }}>Security Layer</div>
-            <div style={{ fontSize: '15px', fontWeight: 600, color: '#1e293b' }}>SSRF Protection</div>
-            <div style={{ fontSize: '11.5px', color: '#64748b', marginTop: '2px' }}>Private IP blocking enabled</div>
+            <div style={{ fontSize: '12px', color: '#666666', fontWeight: 500 }}>Security Layer</div>
+            <div style={{ fontSize: '15px', fontWeight: 600, color: '#111111' }}>SSRF Protection</div>
+            <div style={{ fontSize: '11.5px', color: '#666666', marginTop: '2px' }}>Private IP blocking enabled</div>
           </div>
         </div>
       </div>
@@ -98,7 +96,7 @@ export default function SettingsView({ onCopyText }) {
       {/* Ingestion Endpoint Section */}
       <div className="dashboard-card">
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-          <Globe size={18} color="#4f46e5" />
+          <HugeiconsIcon icon={Globe02Icon} size={18} color="#4f46e5" />
           <h2 className="card-title" style={{ margin: 0 }}>Webhook Ingestion Guide</h2>
         </div>
         <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '14px' }}>
@@ -132,7 +130,7 @@ export default function SettingsView({ onCopyText }) {
                 cursor: 'pointer'
               }}
             >
-              {copiedCurl ? <Check size={13} color="#10b981" /> : <Copy size={13} />}
+              {copiedCurl ? <HugeiconsIcon icon={CheckIcon} size={13} color="#10b981" /> : <HugeiconsIcon icon={Copy01Icon} size={13} />}
               <span>{copiedCurl ? 'Copied' : 'Copy cURL'}</span>
             </button>
           </div>
@@ -145,7 +143,7 @@ export default function SettingsView({ onCopyText }) {
       {/* Engine Security & Replay Policies */}
       <div className="dashboard-card">
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-          <ShieldCheck size={18} color="#10b981" />
+          <HugeiconsIcon icon={ShieldCheckIcon} size={18} color="#10b981" />
           <h2 className="card-title" style={{ margin: 0 }}>Engine Parameters & Security</h2>
         </div>
 

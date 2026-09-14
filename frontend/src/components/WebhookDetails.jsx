@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { Copy, X, RotateCw, Check, AlertCircle } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import {
+  Copy01Icon,
+  Cancel01Icon,
+  ReloadIcon,
+  CheckIcon,
+  AlertCircleIcon
+} from '@hugeicons/core-free-icons';
 
 export default function WebhookDetails({
   webhook,
@@ -112,7 +119,7 @@ export default function WebhookDetails({
           onClick={onClose}
           title="Close details"
         >
-          <X size={16} />
+          <HugeiconsIcon icon={Cancel01Icon} size={16} />
         </button>
       </div>
 
@@ -124,7 +131,7 @@ export default function WebhookDetails({
           onClick={() => onCopyText(webhook.webhook_id, 'Webhook ID copied')}
           title="Copy Webhook ID"
         >
-          <Copy size={13} />
+          <HugeiconsIcon icon={Copy01Icon} size={13} />
         </button>
       </div>
 
@@ -141,7 +148,7 @@ export default function WebhookDetails({
           fontSize: '12px',
           color: '#b91c1c'
         }}>
-          <AlertCircle size={14} />
+          <HugeiconsIcon icon={AlertCircleIcon} size={14} />
           <span>{error}</span>
         </div>
       )}
@@ -154,9 +161,9 @@ export default function WebhookDetails({
           gap: '6px',
           padding: '6px 10px',
           fontSize: '12px',
-          color: '#6366f1'
+          color: 'var(--primary)'
         }}>
-          <RotateCw size={12} className="spinning" />
+          <HugeiconsIcon icon={ReloadIcon} size={12} className="spinning" />
           <span>Loading full details...</span>
         </div>
       )}
@@ -227,7 +234,7 @@ export default function WebhookDetails({
             onClick={handleCopyCode}
             title="Copy code"
           >
-            {copiedCode ? <Check size={12} color="#16a34a" /> : <Copy size={12} />}
+            {copiedCode ? <HugeiconsIcon icon={CheckIcon} size={12} color="#16a34a" /> : <HugeiconsIcon icon={Copy01Icon} size={12} />}
           </button>
           <select
             className="viewer-select"
@@ -261,8 +268,8 @@ export default function WebhookDetails({
         </div>
 
         {replaysLoading ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '10px 0', fontSize: '12px', color: '#6366f1' }}>
-            <RotateCw size={12} className="spinning" />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '10px 0', fontSize: '12px', color: 'var(--primary)' }}>
+            <HugeiconsIcon icon={ReloadIcon} size={12} className="spinning" />
             <span>Loading replays...</span>
           </div>
         ) : replaysError ? (
@@ -305,7 +312,7 @@ export default function WebhookDetails({
         className="btn-replay-action"
         onClick={() => onReplayClick(webhook)}
       >
-        <RotateCw size={15} strokeWidth={2.2} />
+        <HugeiconsIcon icon={ReloadIcon} size={15} strokeWidth={2.2} />
         <span>Replay Webhook</span>
       </button>
     </div>

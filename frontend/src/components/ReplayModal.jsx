@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { X, Play, RotateCw, CheckCircle2, XCircle } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import {
+  Cancel01Icon,
+  PlayIcon,
+  ReloadIcon,
+  CheckmarkCircle02Icon,
+  CancelCircleIcon
+} from '@hugeicons/core-free-icons';
 
 export default function ReplayModal({
   webhook,
@@ -54,7 +61,7 @@ export default function ReplayModal({
         <div className="modal-header">
           <h3 className="modal-title">Replay Webhook</h3>
           <button className="icon-btn" onClick={handleClose} title="Close modal">
-            <X size={18} />
+            <HugeiconsIcon icon={Cancel01Icon} size={18} />
           </button>
         </div>
 
@@ -146,7 +153,7 @@ export default function ReplayModal({
                 color: '#b91c1c'
               }}
             >
-              <XCircle size={16} />
+              <HugeiconsIcon icon={CancelCircleIcon} size={16} />
               <span>{error}</span>
             </div>
           )}
@@ -167,15 +174,15 @@ export default function ReplayModal({
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   {result.success ? (
-                    <CheckCircle2 size={16} color="#16a34a" />
+                    <HugeiconsIcon icon={CheckmarkCircle02Icon} size={16} color="var(--success)" />
                   ) : (
-                    <XCircle size={16} color="#ef4444" />
+                    <HugeiconsIcon icon={CancelCircleIcon} size={16} color="var(--danger)" />
                   )}
-                  <span style={{ fontWeight: 600, fontSize: '13px', color: result.success ? '#15803d' : '#b91c1c' }}>
+                  <span style={{ fontWeight: 600, fontSize: '13px', color: result.success ? 'var(--success-text)' : 'var(--danger-text)' }}>
                     {result.success ? 'Replay Succeeded' : 'Replay Failed'}
                   </span>
                 </div>
-                <div style={{ fontSize: '12px', color: '#64748b' }}>
+                <div style={{ fontSize: '12px', color: '#666666' }}>
                   Status: <strong>{result.status_code}</strong> • Duration: <strong>{result.duration}</strong>
                 </div>
               </div>
@@ -195,12 +202,12 @@ export default function ReplayModal({
           >
             {isSubmitting ? (
               <>
-                <RotateCw size={14} className="spinning" />
+                <HugeiconsIcon icon={ReloadIcon} size={14} className="spinning" />
                 <span>Replaying...</span>
               </>
             ) : (
               <>
-                <Play size={14} />
+                <HugeiconsIcon icon={PlayIcon} size={14} />
                 <span>Replay Webhook</span>
               </>
             )}

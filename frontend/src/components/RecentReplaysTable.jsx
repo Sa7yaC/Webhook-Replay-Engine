@@ -1,5 +1,6 @@
 import React from 'react';
-import { RotateCw } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { ReloadIcon } from '@hugeicons/core-free-icons';
 
 export default function RecentReplaysTable({ replays = [], isLoading, onSelectWebhookById, onSelectReplay }) {
   return (
@@ -21,9 +22,9 @@ export default function RecentReplaysTable({ replays = [], isLoading, onSelectWe
           <tbody>
             {isLoading && replays.length === 0 ? (
               <tr>
-                <td colSpan="6" style={{ textAlign: 'center', padding: '24px', color: '#94a3b8' }}>
+                <td colSpan="6" style={{ textAlign: 'center', padding: '24px', color: '#7A7A7A' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                    <RotateCw size={14} className="spinning" style={{ color: '#6366f1' }} />
+                    <HugeiconsIcon icon={ReloadIcon} size={14} className="spinning" style={{ color: 'var(--primary)' }} />
                     <span>Loading replays...</span>
                   </div>
                 </td>
