@@ -48,11 +48,11 @@ export const getWebhook = async (req, res) => {
             const now = new Date();
             if (r === 'today') {
                 start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
-            } else if (r === 'last 24 hours' || r === '24h') {
+            } else if (r === 'last 24 hours' || r === '24h' || r === '1 day' || r === '1d') {
                 start = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-            } else if (r === 'last 7 days' || r === '7d') {
+            } else if (r === 'last 7 days' || r === '7d' || r === '7 days') {
                 start = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-            } else if (r === 'last 30 days' || r === '30d') {
+            } else if (r === 'last 30 days' || r === '30d' || r === '30 days') {
                 start = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
             }
         }

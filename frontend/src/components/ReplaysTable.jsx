@@ -18,7 +18,9 @@ export default function ReplaysTable({
   onRefresh,
   onSelectWebhookById,
   onReplayClick,
-  onCopyText
+  onCopyText,
+  selectedReplay,
+  onSelectReplay
 }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All Status');
@@ -165,12 +167,19 @@ export default function ReplaysTable({
                 const isCompleted = rep.status === 'Completed';
                 const isFailed = rep.status === 'Failed';
                 const replayKey = rep.id || rep.replay_id || `${rep.webhook_id}_${rep.created_at}`;
+                const isSelected = selectedReplay?.id === rep.id || (selectedReplay && rep && selectedReplay?.webhook_id === rep.webhook_id && selectedReplay?.created_at === rep.created_at);
 
                 return (
                   <tr
                     key={replayKey}
-                    className="table-row"
-                    onClick={() => setInspectReplay(rep)}
+                    className={`table-row ${isSelected ? 'selected' : ''}`}
+                    onClick={() => {
+                      if (onSelectReplay) {
+                        onSelectReplay(rep);
+                      } else {
+                        setInspectReplay(rep);
+                      }
+                    }}
                   >
                     <td>
                       <span className="mono-link">
@@ -241,7 +250,11 @@ export default function ReplaysTable({
                           <button
                             className="dropdown-item"
                             onClick={() => {
-                              setInspectReplay(rep);
+                              if (onSelectReplay) {
+                                onSelectReplay(rep);
+                              } else {
+                                setInspectReplay(rep);
+                              }
                               setActiveMenuId(null);
                             }}
                           >
@@ -341,8 +354,8 @@ export default function ReplaysTable({
         </div>
       )}
 
-      {/* Replay Details Inspection Modal */}
-      {inspectReplay && (
+      {/* Replay Details Inspection Modal (Fallback when no side-panel provided) */}
+      {!onSelectReplay && inspectReplay && (
         <div className="modal-backdrop" onClick={() => setInspectReplay(null)}>
           <div 
             className="modal-container" 

@@ -55,14 +55,14 @@ export default function SummaryCard({ stats, type = 'webhooks' }) {
           title: 'Successful',
           value: stats?.successful ?? '—',
           percentageChange: stats?.successfulChange ?? null,
-          subtext: 'Delivery status not stored',
+          subtext: stats?.successfulSubtext || (stats?.successful !== '—' && stats?.successful != null ? 'Successful replays' : 'Delivery status not stored'),
         },
         {
           id: 'failed',
           title: 'Failed',
           value: stats?.failed ?? '—',
           percentageChange: stats?.failedChange ?? null,
-          subtext: 'Delivery status not stored',
+          subtext: stats?.failedSubtext || (stats?.failed !== '—' && stats?.failed != null ? 'Failed replays' : 'Delivery status not stored'),
         }
       ];
 
@@ -72,7 +72,9 @@ export default function SummaryCard({ stats, type = 'webhooks' }) {
         <div key={card.id} className="summary-card">
           <div className="summary-card-header">
             <h2 className="summary-label">{card.title}</h2>
-            <MetricChange percentage={card.percentageChange} />
+            {card.percentageChange != null && (
+              <MetricChange percentage={card.percentageChange} />
+            )}
           </div>
           <div className="summary-value">{card.value}</div>
           {card.subtext && <div className="summary-subtext">{card.subtext}</div>}

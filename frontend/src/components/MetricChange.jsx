@@ -15,15 +15,7 @@ import React from 'react';
 export default function MetricChange({ percentage, direction, value, label }) {
   // If percentage is not available or cannot be computed
   if (percentage == null || isNaN(percentage)) {
-    return (
-      <span
-        className="metric-change-badge none"
-        title={label || 'Historical comparison not available'}
-        aria-label={label || 'Historical comparison not available'}
-      >
-        —
-      </span>
-    );
+    return null;
   }
 
   const num = Number(percentage);

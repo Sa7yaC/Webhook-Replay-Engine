@@ -6,20 +6,23 @@ import WebhookTable from './components/WebhookTable';
 import RecentReplaysTable from './components/RecentReplaysTable';
 import ReplaysTable from './components/ReplaysTable';
 import WebhookDetails from './components/WebhookDetails';
+import ReplayDetails from './components/ReplayDetails';
 import SettingsView from './components/SettingsView';
 import ReplayModal from './components/ReplayModal';
 import NewWebhookModal from './components/NewWebhookModal';
 import Toast from './components/Toast';
+import AnalyticsSection from './components/AnalyticsSection';
 import useWebhooks from './hooks/useWebhooks';
 
 import './App.css';
 
 export default function App() {
   const [activeNav, setActiveNav] = useState('Dashboard');
-  const [dateRange, setDateRange] = useState('Last 7 days');
+  const [dateRange, setDateRange] = useState('7 Days');
   const [replayModalOpen, setReplayModalOpen] = useState(false);
   const [replayTargetWebhook, setReplayTargetWebhook] = useState(null);
   const [newWebhookModalOpen, setNewWebhookModalOpen] = useState(false);
+  const [selectedReplay, setSelectedReplay] = useState(null);
 
   // Toast feedback
   const [toast, setToast] = useState({ message: '', visible: false });
@@ -55,6 +58,8 @@ export default function App() {
     executeReplay,
     replaySubmitting,
 
+    metricsLoading,
+    loadMetrics,
     stats,
     replayStats,
   } = useWebhooks(dateRange);
@@ -64,6 +69,7 @@ export default function App() {
   const handleDateRangeChange = (newRange) => {
     setDateRange(newRange);
     selectWebhook(null);
+    setSelectedReplay(null);
   };
 
   const handleSelectWebhook = (webhook) => {
@@ -85,6 +91,7 @@ export default function App() {
 
   const handleRefresh = async () => {
     await Promise.allSettled([
+      loadMetrics(dateRange),
       loadWebhooks(dateRange),
       loadAllReplays(dateRange)
     ]);
@@ -93,6 +100,7 @@ export default function App() {
 
   const handleTestWebhookCreated = () => {
     // Re-fetch the real data to pick up the newly ingested webhook
+    loadMetrics(dateRange);
     loadWebhooks(dateRange);
     loadAllReplays(dateRange);
     showToast('Webhook ingestion triggered — refreshing list');
@@ -100,6 +108,7 @@ export default function App() {
 
   const handleSelectWebhookFromReplay = (whId) => {
     setActiveNav('Webhooks');
+    setSelectedReplay(null);
     const target = webhooks.find(w => w.webhook_id === whId) || { webhook_id: whId, id: whId };
     selectWebhook(target);
   };
@@ -163,6 +172,18 @@ export default function App() {
         {activeNav === 'Dashboard' && (
           <>
             <SummaryCard stats={stats} type="webhooks" />
+
+            {/* Analytics Visualizations (Webhook Activity & Event Overview) */}
+            <AnalyticsSection
+              webhooks={webhooks}
+              replays={allReplays}
+              stats={stats}
+              dateRange={dateRange}
+              onDateRangeChange={handleDateRangeChange}
+              loading={listLoading || metricsLoading || allReplaysLoading}
+              error={listError}
+              onRetry={handleRefresh}
+            />
 
             <div className="content-grid">
               {/* Left Column: Recent Webhooks & Recent Replays */}
@@ -276,22 +297,57 @@ export default function App() {
 
         {/* 3. REPLAYS VIEW */}
         {activeNav === 'Replays' && (
-          <div style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            <ReplaysTable
-              replays={allReplays}
-              dateRange={dateRange}
-              isLoading={allReplaysLoading}
-              isRefreshing={allReplaysLoading}
-              onRefresh={handleRefresh}
-              onSelectWebhookById={handleSelectWebhookFromReplay}
-              onReplayClick={handleOpenReplayModal}
-              onCopyText={(text, msg) => showToast(msg)}
-            />
+          <>
+            {selectedReplay ? (
+              <div className="content-grid">
+                <div className="content-left">
+                  <ReplaysTable
+                    replays={allReplays}
+                    dateRange={dateRange}
+                    selectedReplay={selectedReplay}
+                    onSelectReplay={setSelectedReplay}
+                    isLoading={allReplaysLoading}
+                    isRefreshing={allReplaysLoading}
+                    onRefresh={handleRefresh}
+                    onSelectWebhookById={handleSelectWebhookFromReplay}
+                    onReplayClick={handleOpenReplayModal}
+                    onCopyText={(text, msg) => showToast(msg)}
+                  />
+                  <footer className="app-footer">
+                    &copy; 2025 HookPal. All rights reserved.
+                  </footer>
+                </div>
+                <div className="content-right">
+                  <ReplayDetails
+                    replay={selectedReplay}
+                    onClose={() => setSelectedReplay(null)}
+                    onReplayClick={handleOpenReplayModal}
+                    onSelectWebhookById={handleSelectWebhookFromReplay}
+                    onCopyText={(text, msg) => showToast(msg)}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <ReplaysTable
+                  replays={allReplays}
+                  dateRange={dateRange}
+                  selectedReplay={selectedReplay}
+                  onSelectReplay={setSelectedReplay}
+                  isLoading={allReplaysLoading}
+                  isRefreshing={allReplaysLoading}
+                  onRefresh={handleRefresh}
+                  onSelectWebhookById={handleSelectWebhookFromReplay}
+                  onReplayClick={handleOpenReplayModal}
+                  onCopyText={(text, msg) => showToast(msg)}
+                />
 
-            <footer className="app-footer">
-              &copy; 2025 HookPal. All rights reserved.
-            </footer>
-          </div>
+                <footer className="app-footer">
+                  &copy; 2025 HookPal. All rights reserved.
+                </footer>
+              </div>
+            )}
+          </>
         )}
 
         {/* 4. SETTINGS VIEW (temporarily commented out) */}

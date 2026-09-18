@@ -10,7 +10,7 @@ import {
 export default function Header({ 
   title = 'Dashboard', 
   subtitle = 'Monitor and replay your webhooks', 
-  dateRange = 'Today', 
+  dateRange = '7 Days', 
   onDateRangeChange, 
   onNewWebhookClick,
   showDateFilter = true
@@ -18,7 +18,7 @@ export default function Header({
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
 
-  const ranges = ['Today', 'Last 24 hours', 'Last 7 days', 'Last 30 days', 'All time'];
+  const ranges = ['1 Day', '7 Days', '30 Days'];
 
   // Close dropdown when clicking outside
   useEffect(() => {

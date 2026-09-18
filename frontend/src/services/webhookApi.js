@@ -188,11 +188,11 @@ export async function getWebhooks(options) {
 
     if (dateRange === 'Today') {
       startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
-    } else if (dateRange === 'Last 24 hours') {
+    } else if (dateRange === 'Last 24 hours' || dateRange === '1 Day' || dateRange === '1 day') {
       startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-    } else if (dateRange === 'Last 7 days') {
+    } else if (dateRange === 'Last 7 days' || dateRange === '7 Days' || dateRange === '7 days') {
       startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-    } else if (dateRange === 'Last 30 days') {
+    } else if (dateRange === 'Last 30 days' || dateRange === '30 Days' || dateRange === '30 days') {
       startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
     }
 
@@ -298,11 +298,11 @@ export async function getAllReplays(options) {
 
       if (dateRange === 'Today') {
         startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
-      } else if (dateRange === 'Last 24 hours') {
+      } else if (dateRange === 'Last 24 hours' || dateRange === '1 Day' || dateRange === '1 day') {
         startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-      } else if (dateRange === 'Last 7 days') {
+      } else if (dateRange === 'Last 7 days' || dateRange === '7 Days' || dateRange === '7 days') {
         startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-      } else if (dateRange === 'Last 30 days') {
+      } else if (dateRange === 'Last 30 days' || dateRange === '30 Days' || dateRange === '30 days') {
         startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
       }
 
@@ -321,3 +321,56 @@ export async function getAllReplays(options) {
   }
   return [];
 }
+
+/**
+ * Fetch consolidated dashboard metrics for the metric cards.
+ * Endpoint: GET /metrics?range=...&startDate=...&endDate=...
+ */
+export async function getDashboardMetrics(options) {
+  const queryParams = new URLSearchParams();
+
+  let dateRange = typeof options === 'string' ? options : options?.dateRange;
+  let customStartDate = typeof options === 'object' ? options?.startDate : null;
+  let customEndDate = typeof options === 'object' ? options?.endDate : null;
+
+  if (customStartDate) {
+    const s = customStartDate instanceof Date ? customStartDate.toISOString() : String(customStartDate);
+    queryParams.append('startDate', s);
+  }
+
+  if (customEndDate) {
+    const e = customEndDate instanceof Date ? customEndDate.toISOString() : String(customEndDate);
+    queryParams.append('endDate', e);
+  }
+
+  if (!customStartDate && dateRange && dateRange !== 'All time') {
+    queryParams.append('range', dateRange);
+
+    const now = new Date();
+    let startDate = null;
+
+    if (dateRange === 'Today') {
+      startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+    } else if (dateRange === 'Last 24 hours' || dateRange === '1 Day' || dateRange === '1 day') {
+      startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    } else if (dateRange === 'Last 7 days' || dateRange === '7 Days' || dateRange === '7 days') {
+      startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    } else if (dateRange === 'Last 30 days' || dateRange === '30 Days' || dateRange === '30 days') {
+      startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    }
+
+    if (startDate) {
+      queryParams.append('startDate', startDate.toISOString());
+    }
+  }
+
+  const queryStr = queryParams.toString() ? `?${queryParams.toString()}` : '';
+  const result = await apiFetch(`/metrics${queryStr}`);
+
+  if (!result.success || !result.data) {
+    throw new Error('Unexpected response shape from GET /metrics');
+  }
+
+  return result.data;
+}
+
